@@ -4,6 +4,10 @@ import { useNavigate } from 'react-router-dom';
 import EventCard from '../components/EventCard';
 import useEvents from '../hooks/useEvents';
 
+// Vite requires importing files from src/ as modules, not plain string paths.
+// Swap "car-hero.mp4" for your actual filename if it's different.
+import carHeroVideo from '../assets/BMW Video 2026-06-17 at 15.21.04.mp4';
+
 // ─── Animations ─────────────────────────────────────────────────────
 const fadeUp = keyframes`
   from { opacity: 0; transform: translateY(16px); }
@@ -17,20 +21,43 @@ const Page = styled.div`
 
 // ─── Hero ────────────────────────────────────────────────────────────
 const Hero = styled.section`
-  padding: 80px 40px 60px;
   position: relative;
   overflow: hidden;
+  padding: 80px 40px 60px;
+  min-height: 560px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+`;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: -100px;
-    right: -100px;
-    width: 600px;
-    height: 600px;
-    background: radial-gradient(circle, rgba(232, 64, 28, 0.08) 0%, transparent 70%);
-    pointer-events: none;
-  }
+const HeroVideo = styled.video`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 0;
+`;
+
+const HeroOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  /* Darkens the video so white/light text stays readable.
+     Lighter overall, still slightly heavier near the bottom
+     where the text/stats sit. */
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.3) 0%,
+    rgba(10, 10, 10, 0.45) 60%,
+    rgba(10, 10, 10, 0.65) 100%
+  );
+`;
+
+const HeroContent = styled.div`
+  position: relative;
+  z-index: 2;
 `;
 
 const HeroTag = styled.div`
@@ -358,36 +385,43 @@ const HomePage = () => {
     <Page>
       {/* ── Hero ── */}
       <Hero>
-        <HeroTag>// 2025 Season — Nairobi Circuit Series</HeroTag>
-        <HeroTitle>
-          <span className="outline">Track</span>
-          <br />
-          <span className="accent">Meets</span>
-          <br />
-          Unleashed
-        </HeroTitle>
-        <HeroSub>
-          Register for Nairobi's premier car meet events. Spectate the action
-          or enter your machine on the strip.
-        </HeroSub>
-        <HeroStats>
-          <Stat $color="accent">
-            <StatNum>{events.length || '—'}</StatNum>
-            <StatLabel>Events this season</StatLabel>
-          </Stat>
-          <Stat $color="accent2">
-            <StatNum>
-              {events.reduce((sum, e) => sum + (e.soldCount ?? 0), 0).toLocaleString() || '—'}
-            </StatNum>
-            <StatLabel>Tickets sold</StatLabel>
-          </Stat>
-          <Stat $color="neutral">
-            <StatNum>
-              {events.filter((e) => e.hasRacer).length || '—'}
-            </StatNum>
-            <StatLabel>Racing events</StatLabel>
-          </Stat>
-        </HeroStats>
+        <HeroVideo autoPlay loop muted playsInline>
+          <source src={carHeroVideo} type="video/mp4" />
+        </HeroVideo>
+        <HeroOverlay />
+
+        <HeroContent>
+          <HeroTag>// 2025 Season — Nairobi Circuit Series</HeroTag>
+          <HeroTitle>
+            <span className="outline">Track</span>
+            <br />
+            <span className="accent">Meets</span>
+            <br />
+            Unleashed
+          </HeroTitle>
+          <HeroSub>
+            Register for Nairobi's premier car meet events. Spectate the action
+            or enter your machine on the strip.
+          </HeroSub>
+          <HeroStats>
+            <Stat $color="accent">
+              <StatNum>{events.length || '—'}</StatNum>
+              <StatLabel>Events this season</StatLabel>
+            </Stat>
+            <Stat $color="accent2">
+              <StatNum>
+                {events.reduce((sum, e) => sum + (e.soldCount ?? 0), 0).toLocaleString() || '—'}
+              </StatNum>
+              <StatLabel>Tickets sold</StatLabel>
+            </Stat>
+            <Stat $color="neutral">
+              <StatNum>
+                {events.filter((e) => e.hasRacer).length || '—'}
+              </StatNum>
+              <StatLabel>Racing events</StatLabel>
+            </Stat>
+          </HeroStats>
+        </HeroContent>
       </Hero>
 
       {/* ── Filter Bar ── */}
@@ -452,7 +486,7 @@ const HomePage = () => {
                   <StripItemLoc>{event.venue}</StripItemLoc>
                 </StripInfo>
                 <StripPrice>
-                  KES {Math.min(event.spectatorPrice ?? 0, event.racerPrice ?? 0).toLocaleString()}
+                  KES {Math.min(event.spectatorPrice, event.racerPrice).toLocaleString()}
                 </StripPrice>
               </StripItem>
             );

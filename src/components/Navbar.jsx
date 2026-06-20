@@ -91,7 +91,7 @@ const Navbar = () => {
 
   return (
     <Nav>
-      <Logo to="/">Rev<span>Meet</span></Logo>
+      <Logo to="/">Torque<span>Hub</span></Logo>
 
       <NavLinks>
         <NavLink to="/">Events</NavLink>
