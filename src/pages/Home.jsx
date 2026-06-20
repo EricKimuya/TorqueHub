@@ -6,7 +6,7 @@ import useEvents from '../hooks/useEvents';
 
 // Vite requires importing files from src/ as modules, not plain string paths.
 // Swap "car-hero.mp4" for your actual filename if it's different.
-import carHeroVideo from '../assets/BMW Video 2026-06-17 at 15.21.04.mp4';
+import carHeroVideo from '../assets/hero.mp4';
 
 // ─── Animations ─────────────────────────────────────────────────────
 const fadeUp = keyframes`
