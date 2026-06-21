@@ -8,14 +8,21 @@ import { useState, useEffect } from 'react';
  *   const { data } = await api.get('/events');
  *   setEvents(data.events.map(transform));
  *
- * and delete the MOCK_EVENTS block entirely.
+ * and delete the MOCK_EVENTS / addDays block entirely.
  */
+
+const addDays = (days) => {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  d.setHours(18, 0, 0, 0);
+  return d.toISOString();
+};
 
 const MOCK_EVENTS = [
   {
     id: '1',
     name: 'Night Drag Series — Round 4',
-    date: '2025-06-14T20:00:00',
+    date: addDays(6),
     venue: 'Nairobi Raceway, Karen',
     status: 'open',
     capacity: 200,
@@ -30,7 +37,7 @@ const MOCK_EVENTS = [
   {
     id: '2',
     name: 'JDM Sunday Showdown',
-    date: '2025-06-22T09:00:00',
+    date: addDays(14),
     venue: 'KICC Grounds',
     status: 'open',
     capacity: 300,
@@ -45,7 +52,7 @@ const MOCK_EVENTS = [
   {
     id: '3',
     name: 'Independence Burnout Bash',
-    date: '2025-07-04T18:00:00',
+    date: addDays(21),
     venue: 'Mombasa Road Strip',
     status: 'limited',
     capacity: 80,
@@ -60,7 +67,7 @@ const MOCK_EVENTS = [
   {
     id: '4',
     name: 'Track Day — Open Class',
-    date: '2025-07-12T08:00:00',
+    date: addDays(28),
     venue: 'Ngong Raceway',
     status: 'sold',
     capacity: 60,
@@ -75,7 +82,7 @@ const MOCK_EVENTS = [
   {
     id: '5',
     name: 'Drift Academy Open Day',
-    date: '2025-07-19T10:00:00',
+    date: addDays(35),
     venue: 'Athi River',
     status: 'open',
     capacity: 40,
@@ -90,7 +97,7 @@ const MOCK_EVENTS = [
   {
     id: '6',
     name: 'Supercar Sunday',
-    date: '2025-07-27T11:00:00',
+    date: addDays(40),
     venue: 'Two Rivers Mall',
     status: 'open',
     capacity: 500,
@@ -102,11 +109,10 @@ const MOCK_EVENTS = [
     description:
       'Exotics, muscle, and hypercars on display. Lamborghini, Ferrari, Porsche owners — register your slot in the paddock.',
   },
-  // Further ahead — these appear in the strip at the bottom
   {
     id: '7',
     name: 'Rally Sprint — Limuru Hills',
-    date: '2025-08-02T07:00:00',
+    date: addDays(50),
     venue: 'Limuru, Kiambu County',
     status: 'open',
     capacity: 50,
@@ -120,7 +126,7 @@ const MOCK_EVENTS = [
   {
     id: '8',
     name: 'Midnight Drag — JKIA Circuit',
-    date: '2025-08-16T22:00:00',
+    date: addDays(60),
     venue: 'Embakasi, Nairobi',
     status: 'open',
     capacity: 120,
@@ -134,7 +140,7 @@ const MOCK_EVENTS = [
   {
     id: '9',
     name: 'Season Finale — Ngong Raceway',
-    date: '2025-08-30T09:00:00',
+    date: addDays(70),
     venue: 'Ngong, Kajiado County',
     status: 'open',
     capacity: 150,
@@ -147,7 +153,6 @@ const MOCK_EVENTS = [
   },
 ];
 
-// ─── Date formatting helper ──────────────────────────────────────────
 const formatEventDate = (isoDate) => {
   const d = new Date(isoDate);
   return d.toLocaleDateString('en-KE', {
@@ -158,7 +163,6 @@ const formatEventDate = (isoDate) => {
   });
 };
 
-// ─── Price display helper ────────────────────────────────────────────
 const formatPrice = (event) => {
   if (event.hasSpectator && event.hasRacer) {
     return {
@@ -175,14 +179,12 @@ const formatPrice = (event) => {
   return { label: 'Spectator', display: `KES ${event.spectatorPrice.toLocaleString()}` };
 };
 
-// ─── Hook ────────────────────────────────────────────────────────────
 const useEvents = () => {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Simulate a network delay so loading skeletons are visible
     const timer = setTimeout(() => {
       const transformed = MOCK_EVENTS.map((e) => {
         const price = formatPrice(e);
